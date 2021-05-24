@@ -240,6 +240,13 @@ sgx_status_t Ecall_verify_and_upload_identity(sgx_enclave_id_t eid, crust_status
 //
 //    eq->free_enclave(__FUNCTION__);
 
+	const char* id =
+		"{\"name\":\"shuiyixin\",\"age\":\"21\",\"sex\":\"man\"}";
+     json::JSON entrance_info = json::JSON::Load(std::string(id));
+//     entrance_info["account_id"] = Config::get_instance()->chain_address;
+//     std::string sworker_identity = entrance_info.dump();
+//     p_log->info("Generate identity successfully! Sworker identity: %s\n", sworker_identity.c_str());
+
     return ret;
 }
 

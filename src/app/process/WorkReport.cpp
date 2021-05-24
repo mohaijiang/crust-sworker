@@ -43,6 +43,7 @@ bool wait_and_check_exit(size_t t)
  */
 void work_report_loop(void)
 {
+    p_log->info("work_report_loop...\n");
     crust_status_t crust_status = CRUST_SUCCESS;
     crust::Chain *p_chain = crust::Chain::get_instance();
     size_t offline_base_height = REPORT_SLOT;
@@ -109,7 +110,8 @@ void work_report_loop(void)
 
             size_t cut_wait_time = (block_header.number - (block_header.number / REPORT_SLOT) * REPORT_SLOT) * BLOCK_INTERVAL;
 
-            size_t wait_time = get_random_wait_time(id_json["pub_key"].ToString());
+//            size_t wait_time = get_random_wait_time(id_json["pub_key"].ToString());
+            size_t wait_time = 10;
             if (cut_wait_time >= wait_time)
             {
                 wait_time = 0;
@@ -119,6 +121,8 @@ void work_report_loop(void)
                 wait_time = wait_time - cut_wait_time;
             }
             wait_time = std::max(wait_time, (size_t)REPORT_INTERVAL_BLCOK_NUMBER_LOWER_LIMIT);
+
+            p_log->info("wait time %lu ",wait_time);
 
             p_log->info("It is estimated that the workload will be reported at the %lu block\n", block_header.number + (wait_time / BLOCK_INTERVAL) + 1);
             block_header.number = (block_header.number / REPORT_SLOT) * REPORT_SLOT;

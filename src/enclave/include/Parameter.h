@@ -76,8 +76,8 @@
 #define WORKREPORT_SIG "sig"
 #define WORKREPORT_FILE_LIMIT 1000
 #define WORKREPORT_REPORT_INTERVAL 10
-#define REPORT_SLOT 300
-#define BLOCK_INTERVAL 6
+#define REPORT_SLOT 10
+#define BLOCK_INTERVAL 2
 
 // For workload
 #define WL_SRD "srd"

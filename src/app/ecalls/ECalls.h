@@ -2,6 +2,9 @@
 #define _ECALLS_H_
 
 #include "EnclaveQueue.h"
+#include "Chain.h"
+#include "Ipfs.h"
+#include <set>
 
 #if defined(__cplusplus)
 extern "C"
@@ -42,6 +45,10 @@ sgx_status_t Ecall_restore_from_upgrade(sgx_enclave_id_t eid, crust_status_t *st
 
 sgx_status_t Ecall_validate_file(sgx_enclave_id_t eid);
 sgx_status_t Ecall_validate_srd(sgx_enclave_id_t eid);
+
+// workload 引用改变
+bool is_file_dup(std::string cid, size_t &pos);
+void handle_report_result();
 
 #if defined(__cplusplus)
 }

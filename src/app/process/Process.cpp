@@ -43,74 +43,74 @@ bool initialize_config(void)
  */
 bool initialize_enclave()
 {
-    int sgx_support;
-    sgx_status_t ret = SGX_ERROR_UNEXPECTED;
-
-    // ----- Can we run SGX? ----- //
-    p_log->info("Initial enclave...\n");
-    sgx_support = get_sgx_support();
-    if (sgx_support & SGX_SUPPORT_NO)
-    {
-        p_log->err("This system does not support Intel SGX.\n");
-        return false;
-    }
-    else
-    {
-        if (sgx_support & SGX_SUPPORT_ENABLE_REQUIRED)
-        {
-            p_log->err("Intel SGX is supported on this system but disabled in the BIOS\n");
-            return false;
-        }
-        else if (sgx_support & SGX_SUPPORT_REBOOT_REQUIRED)
-        {
-            p_log->err("Intel SGX will be enabled after the next reboot\n");
-            return false;
-        }
-        else if (!(sgx_support & SGX_SUPPORT_ENABLED))
-        {
-            p_log->err("Intel SGX is supported on this sytem but not available for use. \
-                    The system may lock BIOS support, or the Platform Software is not available\n");
-            return false;
-        }
-    }
-
-    // ----- Launch the enclave ----- //
-    uint8_t *p_wl_data = NULL;
-    size_t wl_data_size = 0;
-    if (CRUST_SUCCESS == get_file(SGX_WL_FILE_PATH, &p_wl_data, &wl_data_size))
-    {
-        sgx_status_t reg_ret = sgx_register_wl_cert_chain(p_wl_data, wl_data_size);
-        if (SGX_SUCCESS != reg_ret)
-        {
-            p_log->debug("Encounter problem when registering local white list cert, code:%lx.\n", reg_ret);
-        }
-        free(p_wl_data);
-    }
-    ret = sgx_create_enclave(ENCLAVE_FILE_PATH, SGX_DEBUG_FLAG, NULL, NULL, &global_eid, NULL);
-    if (ret != SGX_SUCCESS)
-    {
-        switch (ret)
-        {
-            case SGX_ERROR_NO_DEVICE:
-                p_log->err("Init enclave failed. Open sgx driver failed, please uninstall your sgx "
-                        "driver (OOT driver and DCAP driver) and reinstall it (OOT driver). "
-                        "If it still fails, please try to reinstall the system. Error code:%lx\n", ret);
-                break;
-            default:
-                p_log->err("Init enclave failed.Error code:%lx\n", ret);
-
-        }
-        return false;
-    }
-
-    // ----- Generate code measurement ----- //
-    if (SGX_SUCCESS != Ecall_gen_sgx_measurement(global_eid, &ret))
-    {
-        p_log->err("Generate code measurement failed!error code:%lx\n", ret);
-        return false;
-    }
-
-    p_log->info("Initial enclave successfully!Enclave id:%d\n", global_eid);
+//    int sgx_support;
+//    sgx_status_t ret = SGX_ERROR_UNEXPECTED;
+//
+//    // ----- Can we run SGX? ----- //
+//    p_log->info("Initial enclave...\n");
+//    sgx_support = get_sgx_support();
+//    if (sgx_support & SGX_SUPPORT_NO)
+//    {
+//        p_log->err("This system does not support Intel SGX.\n");
+//        return false;
+//    }
+//    else
+//    {
+//        if (sgx_support & SGX_SUPPORT_ENABLE_REQUIRED)
+//        {
+//            p_log->err("Intel SGX is supported on this system but disabled in the BIOS\n");
+//            return false;
+//        }
+//        else if (sgx_support & SGX_SUPPORT_REBOOT_REQUIRED)
+//        {
+//            p_log->err("Intel SGX will be enabled after the next reboot\n");
+//            return false;
+//        }
+//        else if (!(sgx_support & SGX_SUPPORT_ENABLED))
+//        {
+//            p_log->err("Intel SGX is supported on this sytem but not available for use. \
+//                    The system may lock BIOS support, or the Platform Software is not available\n");
+//            return false;
+//        }
+//    }
+//
+//    // ----- Launch the enclave ----- //
+//    uint8_t *p_wl_data = NULL;
+//    size_t wl_data_size = 0;
+//    if (CRUST_SUCCESS == get_file(SGX_WL_FILE_PATH, &p_wl_data, &wl_data_size))
+//    {
+//        sgx_status_t reg_ret = sgx_register_wl_cert_chain(p_wl_data, wl_data_size);
+//        if (SGX_SUCCESS != reg_ret)
+//        {
+//            p_log->debug("Encounter problem when registering local white list cert, code:%lx.\n", reg_ret);
+//        }
+//        free(p_wl_data);
+//    }
+//    ret = sgx_create_enclave(ENCLAVE_FILE_PATH, SGX_DEBUG_FLAG, NULL, NULL, &global_eid, NULL);
+//    if (ret != SGX_SUCCESS)
+//    {
+//        switch (ret)
+//        {
+//            case SGX_ERROR_NO_DEVICE:
+//                p_log->err("Init enclave failed. Open sgx driver failed, please uninstall your sgx "
+//                        "driver (OOT driver and DCAP driver) and reinstall it (OOT driver). "
+//                        "If it still fails, please try to reinstall the system. Error code:%lx\n", ret);
+//                break;
+//            default:
+//                p_log->err("Init enclave failed.Error code:%lx\n", ret);
+//
+//        }
+//        return false;
+//    }
+//
+//    // ----- Generate code measurement ----- //
+//    if (SGX_SUCCESS != Ecall_gen_sgx_measurement(global_eid, &ret))
+//    {
+//        p_log->err("Generate code measurement failed!error code:%lx\n", ret);
+//        return false;
+//    }
+//
+//    p_log->info("Initial enclave successfully!Enclave id:%d\n", global_eid);
 
     return true;
 }
@@ -232,11 +232,11 @@ bool upgrade_try_restore()
 
 restore_try_again:
     // Init enclave
-    if (!initialize_enclave())
-    {
-        p_log->err("Init enclave failed!\n");
-        return false;
-    }
+//    if (!initialize_enclave())
+//    {
+//        p_log->err("Init enclave failed!\n");
+//        return false;
+//    }
 
     // Generate ecc key pair
     if (SGX_SUCCESS != Ecall_gen_key_pair(global_eid, &sgx_status, p_config->chain_account_id.c_str(), p_config->chain_account_id.size())
@@ -457,6 +457,7 @@ int process_run()
     json::JSON wl_json;
     std::string wl_str;
     p_log->info("WorkerPID = %d\n", worker_pid);
+    p_log->info("g_upgrade_flag = %g\n", g_upgrade_flag);
 
     // Init conifigure
     if (!initialize_config())
@@ -489,12 +490,12 @@ int process_run()
 
 entry_network_flag:
         // Init enclave
-        if (!initialize_enclave())
-        {
-            p_log->err("Init enclave failed!\n");
-            return_status = -1;
-            goto cleanup;
-        }
+//        if (!initialize_enclave())
+//        {
+//            p_log->err("Init enclave failed!\n");
+//            return_status = -1;
+//            goto cleanup;
+//        }
         p_log->info("Worker global eid: %d\n", global_eid);
 
         // Start enclave

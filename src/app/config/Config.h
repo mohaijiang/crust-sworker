@@ -56,6 +56,7 @@ public:
     std::string chain_account_id;   /* The account id(hex string) of crust chain account */
     std::string chain_password;     /* The password of crust chain account */
     std::string chain_backup;       /* The backup of crust chain account */
+    std::string chain_public_key;
 
     static Config *config;
 

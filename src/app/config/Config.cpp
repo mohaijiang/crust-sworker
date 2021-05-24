@@ -123,6 +123,14 @@ bool Config::init(std::string path)
         return false;
     }
 
+    // chain_public_key
+    this->chain_public_key = config_value["chain"]["chain_public_key"].ToString();
+    if (this->chain_public_key.compare("") == 0)
+    {
+        p_log->err("Please configure 'chain public key'!\n");
+        return false;
+    }
+
     return true;
 }
 

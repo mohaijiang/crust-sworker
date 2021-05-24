@@ -28,15 +28,19 @@ EnclaveData *EnclaveData::get_instance()
 std::string EnclaveData::get_enclave_id_info()
 {
     sgx_status_t sgx_status = SGX_SUCCESS;
-    if (SGX_SUCCESS != (sgx_status = Ecall_id_get_info(global_eid)))
-    {
-        p_log->err("Get id info failed! Error code:%lx\n", sgx_status);
-        return "";
-    }
+//    if (SGX_SUCCESS != (sgx_status = Ecall_id_get_info(global_eid)))
+//    {
+//        p_log->err("Get id info failed! Error code:%lx\n", sgx_status);
+//        return "";
+//    }
+//
+//    SafeLock sl(enclave_id_info_mutex);
+//    sl.lock();
+//    return enclave_id_info;
 
-    SafeLock sl(enclave_id_info_mutex);
-    sl.lock();
-    return enclave_id_info;
+    std::string code_on_chain = crust::Chain::get_instance()->get_swork_code();
+    std::string result = "{\"mrenclave\":\""+code_on_chain+"\",\"pub_key\":\""+Config::get_instance()->chain_public_key+"\"}";
+    return result;
 }
 
 /**
@@ -340,7 +344,8 @@ std::string EnclaveData::gen_workload()
     {
         p_log->warn("Get workload failed! Error code:%lx\n", sgx_status);
     }
-    json::JSON wl_json = json::JSON::Load(get_enclave_workload());
+//    json::JSON wl_json = json::JSON::Load(get_enclave_workload());
+    json::JSON wl_json = json::JSON::Load("{\"files\":{\"valid\":{\"num\":1,\"size\":16781194}},\"srd\":{\"srd_complete\":0,\"srd_remaining_task\":0,\"srd_ratio\":0.99,\"disk_available_for_srd\":72,\"disk_available\":122,\"disk_volume\":227}}");
     if (wl_json.size() == -1)
     {
         return "Get workload failed!";

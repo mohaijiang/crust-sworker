@@ -431,7 +431,7 @@ Output (503, failed):
 ```
 
 Use '/api/v0/storage/unseal' to unseal data
--------------------------------------------
+===========================================
 ```
 curl -XPOST http://<url:port>/api/v0/storage/unseal
 ```

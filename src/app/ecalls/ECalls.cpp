@@ -240,6 +240,19 @@ sgx_status_t Ecall_verify_and_upload_identity(sgx_enclave_id_t eid, crust_status
 //
 //    eq->free_enclave(__FUNCTION__);
 
+    json::JSON id_json;
+    std::string id_str;
+  // Get sworker identity and store it outside of sworker
+    id_json[IAS_CERT] = "certchain_1";
+    id_json[IAS_SIG] = "ias_sig";
+    id_json[IAS_ISV_BODY] = "isv_body";
+    id_json[IAS_CHAIN_ACCOUNT_ID] = "chain_account_id";
+    id_json[IAS_REPORT_SIG] = "hexstring_safe(&ecc_signature, sizeof(sgx_ec256_signature_t))";
+    id_str = id_json.dump();
+
+    sgx_status_t sgx_status  = SGX_SUCCESS;
+    // Upload identity to chain
+    ret = ocall_upload_identity(id_str.c_str());
     return ret;
 }
 

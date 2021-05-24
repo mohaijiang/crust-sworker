@@ -232,11 +232,11 @@ bool upgrade_try_restore()
 
 restore_try_again:
     // Init enclave
-    if (!initialize_enclave())
-    {
-        p_log->err("Init enclave failed!\n");
-        return false;
-    }
+//    if (!initialize_enclave())
+//    {
+//        p_log->err("Init enclave failed!\n");
+//        return false;
+//    }
 
     // Generate ecc key pair
     if (SGX_SUCCESS != Ecall_gen_key_pair(global_eid, &sgx_status, p_config->chain_account_id.c_str(), p_config->chain_account_id.size())
@@ -489,12 +489,12 @@ int process_run()
 
 entry_network_flag:
         // Init enclave
-        if (!initialize_enclave())
-        {
-            p_log->err("Init enclave failed!\n");
-            return_status = -1;
-            goto cleanup;
-        }
+//        if (!initialize_enclave())
+//        {
+//            p_log->err("Init enclave failed!\n");
+//            return_status = -1;
+//            goto cleanup;
+//        }
         p_log->info("Worker global eid: %d\n", global_eid);
 
         // Start enclave

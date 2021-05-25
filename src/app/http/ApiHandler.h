@@ -757,6 +757,7 @@ void ApiHandler::http_handler(beast::string_view /*doc_root*/,
             else
             {
                 sgx_status_t sgx_status = SGX_SUCCESS;
+                p_log->info("file_path: %s\n",p_config->file_path);
                 if(!create_directory(p_config->file_path))
                 {
                     ret_info = "Create file directory failed! No space or no privilege";

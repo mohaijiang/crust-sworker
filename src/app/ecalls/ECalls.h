@@ -2,7 +2,7 @@
 #define _ECALLS_H_
 
 #include "EnclaveQueue.h"
-//#include "OCalls.h"
+#include "Chain.h"
 
 #if defined(__cplusplus)
 extern "C"

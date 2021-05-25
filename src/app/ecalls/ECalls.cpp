@@ -1,6 +1,8 @@
 #include "ECalls.h"
 
 EnclaveQueue *eq = EnclaveQueue::get_instance();
+crust::Log *p_log = crust::Log::get_instance();
+extern bool offline_chain_mode;
 
 /**
  * @description: A wrapper function, seal one G srd files under directory, can be called from multiple threads
@@ -242,13 +244,75 @@ sgx_status_t Ecall_verify_and_upload_identity(sgx_enclave_id_t eid, crust_status
 //
 //    eq->free_enclave(__FUNCTION__);
 
-	const char* id =
-		"{\"name\":\"shuiyixin\",\"age\":\"21\",\"sex\":\"man\"}";
-     json::JSON entrance_info = json::JSON::Load(std::string(id));
-//     entrance_info["account_id"] = Config::get_instance()->chain_address;
-//     std::string sworker_identity = entrance_info.dump();
-//     p_log->info("Generate identity successfully! Sworker identity: %s\n", sworker_identity.c_str());
+    // Get sworker identity and store it outside of sworker
+    std::string id_str;
 
+    id_str = "{\"account_id\":\"5FqazaU79hjpEMiWTWZx81VjsYFst15eBuSBKdQLgQibD7CX\",\"ias_cert\":\"MIIEoTCCAwmgAwIBAgIJANEHdl0yo7CWMA0GCSqGSIb3DQEBCwUAMH4xCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEUMBIGA1UEBwwLU2FudGEgQ2xhcmExGjAYBgNVBAoMEUludGVsIENvcnBvcmF0aW9uMTAwLgYDVQQDDCdJbnRlbCBTR1ggQXR0ZXN0YXRpb24gUmVwb3J0IFNpZ25pbmcgQ0EwHhcNMTYxMTIyMDkzNjU4WhcNMjYxMTIwMDkzNjU4WjB7MQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFDASBgNVBAcMC1NhbnRhIENsYXJhMRowGAYDVQQKDBFJbnRlbCBDb3Jwb3JhdGlvbjEtMCsGA1UEAwwkSW50ZWwgU0dYIEF0dGVzdGF0aW9uIFJlcG9ydCBTaWduaW5nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqXot4OZuphR8nudFrAFiaGxxkgma/Es/BA+tbeCTUR106AL1ENcWA4FX3K+E9BBL0/7X5rj5nIgX/R/1ubhkKWw9gfqPG3KeAtIdcv/uTO1yXv50vqaPvE1CRChvzdS/ZEBqQ5oVvLTPZ3VEicQjlytKgN9cLnxbwtuvLUK7eyRPfJW/ksddOzP8VBBniolYnRCD2jrMRZ8nBM2ZWYwnXnwYeOAHV+W9tOhAImwRwKF/95yAsVwd21ryHMJBcGH70qLagZ7Ttyt++qO/6+KAXJuKwZqjRlEtSEz8gZQeFfVYgcwSfo96oSMAzVr7V0L6HSDLRnpb6xxmbPdqNol4tQIDAQABo4GkMIGhMB8GA1UdIwQYMBaAFHhDe3amfrzQr35CN+s1fDuHAVE8MA4GA1UdDwEB/wQEAwIGwDAMBgNVHRMBAf8EAjAAMGAGA1UdHwRZMFcwVaBToFGGT2h0dHA6Ly90cnVzdGVkc2VydmljZXMuaW50ZWwuY29tL2NvbnRlbnQvQ1JML1NHWC9BdHRlc3RhdGlvblJlcG9ydFNpZ25pbmdDQS5jcmwwDQYJKoZIhvcNAQELBQADggGBAGcIthtcK9IVRz4rRq+ZKE+7k50/OxUsmW8aavOzKb0iCx07YQ9rzi5nU73tME2yGRLzhSViFs/LpFa9lpQL6JL1aQwmDR74TxYGBAIi5f4I5TJoCCEqRHz91kpG6Uvyn2tLmnIdJbPE4vYvWLrtXXfFBSSPD4Afn7+3/XUggAlc7oCTizOfbbtOFlYA4g5KcYgS1J2ZAeMQqbUdZseZCcaZZZn65tdqee8UXZlDvx0+NdO0LR+5pFy+juM0wWbu59MvzcmTXbjsi7HY6zd53Yq5K244fwFHRQ8eOB0IWB+4PfM7FeAApZvlfqlKOlLcZL2uyVmzRkyR5yW72uo9mehX44CiPJ2fse9Y6eQtcfEhMPkmHXI01sN+KwPbpA39+xOsStjhP9N1Y1a2tQAVo+yVgLgV2Hws73Fc0o3wC78qPEA+v2aRs/Be3ZFDgDyghc/1fgU+7C+P6kbqd4poyb6IW8KCJbxfMJvkordNOgOUUxndPHEi/tb/U7uLjLOgPA==\",\"ias_sig\":\"SY33ZjZpOFvt2wj4d6y6CTcdgQIdNtnToqYZovToFIwIvAgr3nUMJrR1rrYTOU1wMCy/XiJwNPoZ0wbVkAtwMjjsMQss6DwNVVFPEuu3Z/1yV1PkyqeyDHk8qy/MTAaEWBqpi473u8flTnWh8JPD+B0UWVin5kqQ5+b8u6D/Um85DpjIMZ6Tb21lsyIF0BUp75Aou/VT7aYMTLVyH1E6ZCLkF9FMvjOo/EmAOue2/Dcd6XhfWp/N5C9F4Ecg9cIz5+/QhwCCcbBxHMRC82t+XwkszC3x5ZL7bZYwnGKy1H4cCc8zxLtZ28bFCklC7qdR0P1pix8QikYyYyThPMGRsg==\",\"isv_body\":\"{\\\"id\\\":\\\"52104701826714974968082314939248593622\\\",\\\"timestamp\\\":\\\"2021-05-25T07:40:35.023319\\\",\\\"version\\\":3,\\\"isvEnclaveQuoteStatus\\\":\\\"GROUP_OUT_OF_DATE\\\",\\\"platformInfoBlob\\\":\\\"1502006504000900000B0B02020280040000000000000000000B00000B000000020000000000000BB479ED4FE015B92CF06A4923E1CFE4461135243259E1686D08473ABF6B243C954B488C8B6E0532C3328C81866429875BFD03F93E7DFB7D18CD20757668233421C1\\\",\\\"isvEnclaveQuoteBody\\\":\\\"AgAAALQLAAALAAoAAAAAAGaNNT9mGXhlXJ1oIM+TtmvczLolsjmv/W8hIn/dpVKzCgr///+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABQAAAAAAAAAHAAAAAAAAAAEovFyJiD7aCnVHS1uwf4BmcaipQjGFBm3tf/owM55gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC9G637ogCU4mSdrLTybzFAmba2MemLakS5KMgTEQp4QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADIGR5BfCD/lLus8OAI8exZFVFEILf8QxCzP+tpXu85W5vfEOKPkk2cmvvEFwTy0y2ISwvt0pkRxTbDbfgOOxHD\\\"}\",\"sig\":\"248767bfbc79dd8e7b2e517b194a3ebc4fcd6b5447fef9723e5ae1c77a6278180fd3ed57b0bfd48c02d62767b30769507aca9b27c915a4cd5d0bcc28723f2a81\"}";
+    json::JSON entrance_info = json::JSON::Load(std::string(id_str));
+    entrance_info["account_id"] = Config::get_instance()->chain_address;
+    std::string sworker_identity = entrance_info.dump();
+    p_log->info("Generate identity successfully! Sworker identity: %s\n", sworker_identity.c_str());
+
+    if (!offline_chain_mode)
+    {
+        // Send identity to crust chain
+        if (!crust::Chain::get_instance()->wait_for_running())
+        {
+            p_log->err("CRUST_UNEXPECTED_ERROR");
+            return ret;
+        }
+
+        // ----- Compare mrenclave ----- //
+        // Get local mrenclave
+        json::JSON id_info;
+        for (int i = 0; i < 20; i++)
+        {
+            std::string id_info_str = EnclaveData::get_instance()->get_enclave_id_info();
+            if (id_info_str.compare("") != 0)
+            {
+                id_info = json::JSON::Load(id_info_str);
+                break;
+            }
+            sleep(3);
+            p_log->info("Cannot get id info, try again(%d)...\n", i+1);
+        }
+        if (!id_info.hasKey("mrenclave"))
+        {
+            p_log->err("Get sWorker identity information failed!\n");
+            return ret;
+        }
+        // Get mrenclave on chain
+        std::string code_on_chain = crust::Chain::get_instance()->get_swork_code();
+        if (code_on_chain == "")
+        {
+            p_log->err("Get sworker code from chain failed! Please check the running status of the chain.\n");
+            return ret;
+        }
+        // Compare these two mrenclave
+        if (code_on_chain.compare(id_info["mrenclave"].ToString()) != 0)
+        {
+            print_attention();
+            std::string cmd1(HRED "sudo crust tools upgrade-image sworker && sudo crust reload sworker" NC);
+            p_log->err("Mrenclave is '%s', code on chain is '%s'. Your sworker need to upgrade, "
+                       "please get the latest sworker by running '%s'\n",
+                       id_info["mrenclave"].ToString().c_str(), code_on_chain.c_str(), cmd1.c_str());
+            return ret;
+        }
+        else
+        {
+            p_log->info("Mrenclave is '%s'\n", id_info["mrenclave"].ToString().c_str());
+        }
+
+        if (!crust::Chain::get_instance()->post_sworker_identity(sworker_identity))
+        {
+            p_log->err("Send identity to crust chain failed!\n");
+            return ret;
+        }
+    }
+    else
+    {
+        p_log->info("Send identity to crust chain successfully!\n");
+    }
     return ret;
 }
 

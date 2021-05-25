@@ -93,7 +93,8 @@ sgx_status_t Ecall_stop_all(sgx_enclave_id_t eid)
  */
 sgx_status_t Ecall_restore_metadata(sgx_enclave_id_t eid, crust_status_t *status)
 {
-    sgx_status_t ret = SGX_SUCCESS;
+      sgx_status_t ret = SGX_ERROR_UNEXPECTED;
+//    sgx_status_t ret = SGX_SUCCESS;
 //    if (SGX_SUCCESS != (ret = eq->try_get_enclave(__FUNCTION__)))
 //    {
 //        return ret;
@@ -187,6 +188,7 @@ sgx_status_t Ecall_gen_key_pair(sgx_enclave_id_t eid, sgx_status_t *status, cons
 sgx_status_t Ecall_get_quote_report(sgx_enclave_id_t eid, sgx_status_t *status, sgx_report_t *report, sgx_target_info_t *target_info)
 {
     sgx_status_t ret = SGX_SUCCESS;
+    *status = SGX_SUCCESS;
 //    if (SGX_SUCCESS != (ret = eq->try_get_enclave(__FUNCTION__)))
 //    {
 //        return ret;

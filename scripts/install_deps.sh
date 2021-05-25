@@ -32,6 +32,7 @@ function installSGXSDK()
         $inteldir/sgxsdk/uninstall.sh &>$ERRFILE
         res=$(($?|$res))
     fi
+    verbose INFO "$rsrcdir/$sdkpkg" h
     execWithExpect_sdk "" "$rsrcdir/$sdkpkg"
     res=$(($?|$res))
     cd - &>/dev/null
@@ -197,6 +198,7 @@ function checkAndInstall()
 {
     for dep in $1; do
         verbose INFO "Checking $dep..." h
+        verbose INFO "apt-get install -y $dep" h
         dpkg -l | grep "\b$dep\b" &>/dev/null
         checkRes $? "return" "yes"
         if [ $? -ne 0 ]; then
@@ -301,8 +303,8 @@ coreNum=$(cat /proc/cpuinfo | grep processor | wc -l)
 instTimeout=30
 toKillPID=()
 # Files
-sdkpkg=sgx_linux_x64_sdk_2.11.100.2.bin
-driverpkg=sgx_linux_x64_driver_2.6.0_b0a445b.bin
+sdkpkg=sgx_linux_x64_sdk_2.13.103.1.bin
+driverpkg=sgx_linux_x64_driver_2.11.0_2d2b795.bin
 sgxsslpkg=$rsrcdir/intel-sgx-ssl-master.zip
 opensslpkg=$rsrcdir/openssl-1.1.1g.tar.gz
 openssldir=$rsrcdir/$(echo openssl-1.1.1g.tar.gz | grep -Po ".*(?=\.tar)")

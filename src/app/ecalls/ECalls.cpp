@@ -335,6 +335,9 @@ sgx_status_t Ecall_seal_file(sgx_enclave_id_t eid, crust_status_t *status, const
 //
 //    eq->free_enclave(__FUNCTION__);
 
+    // 实现代码Storage.cpp
+
+
     return ret;
 }
 

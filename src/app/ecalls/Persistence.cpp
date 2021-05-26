@@ -70,7 +70,7 @@ crust_status_t persist_set(std::string key, const uint8_t *value, size_t value_l
         while (sealed_data_size > offset)
         {
             part_size = std::min((uint32_t)(sealed_data_size - offset), (uint32_t)OCALL_STORE_THRESHOLD);
-            ocall_persist_set(&crust_status, key.c_str(), p_sealed_data_u + offset, part_size, 
+            crust_status = ocall_persist_set(key.c_str(), p_sealed_data_u + offset, part_size,
                     sealed_data_size, &store_buf, offset);
             if (CRUST_SUCCESS != crust_status)
             {
@@ -84,7 +84,7 @@ crust_status_t persist_set(std::string key, const uint8_t *value, size_t value_l
     else
     {
         // Set new data
-        ocall_persist_set(&crust_status, key.c_str(), p_sealed_data_u, sealed_data_size,
+        crust_status = ocall_persist_set(key.c_str(), p_sealed_data_u, sealed_data_size,
                 sealed_data_size, &store_buf, offset);
     }
 
@@ -119,7 +119,7 @@ crust_status_t persist_set_unsafe(std::string key, const uint8_t *value, size_t 
         while (value_len > offset)
         {
             part_size = std::min((uint32_t)(value_len - offset), (uint32_t)OCALL_STORE_THRESHOLD);
-            ocall_persist_set(&crust_status, key.c_str(), value + offset, part_size, 
+            crust_status = ocall_persist_set(key.c_str(), value + offset, part_size,
                     value_len, &store_buf, offset);
             if (CRUST_SUCCESS != crust_status)
             {
@@ -133,7 +133,7 @@ crust_status_t persist_set_unsafe(std::string key, const uint8_t *value, size_t 
     else
     {
         // Set new data
-        ocall_persist_set(&crust_status, key.c_str(), value, value_len, 
+        crust_status = ocall_persist_set(key.c_str(), value, value_len,
                 value_len, &store_buf, offset);
     }
 
@@ -152,7 +152,7 @@ void inner_ocall_persist_get(crust_status_t* crust_status, const char *key, uint
     uint8_t *tmp_value = NULL;
     size_t tmp_value_len = 0;
 
-    ocall_persist_get(crust_status, key, &tmp_value, &tmp_value_len);
+    *crust_status = ocall_persist_get(key, &tmp_value, &tmp_value_len);
     if (CRUST_SUCCESS != *crust_status)
     {
         *value = NULL;
@@ -163,7 +163,7 @@ void inner_ocall_persist_get(crust_status_t* crust_status, const char *key, uint
     *value = (uint8_t*)enc_malloc(tmp_value_len);
     if(*value == NULL)
     {
-        ocall_free_outer_buffer(crust_status, &tmp_value);
+        *crust_status = ocall_free_outer_buffer(&tmp_value);
         if (CRUST_SUCCESS != *crust_status)
         {
             return;
@@ -177,7 +177,7 @@ void inner_ocall_persist_get(crust_status_t* crust_status, const char *key, uint
     memcpy(*value, tmp_value, tmp_value_len);
     *value_len = tmp_value_len;
 
-    ocall_free_outer_buffer(crust_status, &tmp_value);
+    *crust_status = ocall_free_outer_buffer(&tmp_value);
     if (CRUST_SUCCESS != *crust_status)
     {
         free(*value);

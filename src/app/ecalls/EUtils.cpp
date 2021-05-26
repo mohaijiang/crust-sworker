@@ -299,38 +299,38 @@ char *unsigned_char_to_hex(const unsigned char in)
  * @param sealed_data_size -> the length of output bytes
  * @return: Seal status
  */
-crust_status_t seal_data_mrenclave(const uint8_t *p_src, size_t src_len,
-        sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size)
-{
-    sgx_status_t sgx_status = SGX_SUCCESS;
-    crust_status_t crust_status = CRUST_SUCCESS;
-
-    uint32_t sealed_data_sz = sgx_calc_sealed_data_size(0, src_len);
-    *p_sealed_data = (sgx_sealed_data_t *)enc_malloc(sealed_data_sz);
-    if (*p_sealed_data == NULL)
-    {
-        log_err("Malloc memory failed!\n");
-        return CRUST_MALLOC_FAILED;
-    }
-    memset(*p_sealed_data, 0, sealed_data_sz);
-    sgx_attributes_t sgx_attr;
-    sgx_attr.flags = 0xFF0000000000000B;
-    sgx_attr.xfrm = 0;
-    sgx_misc_select_t sgx_misc = 0xF0000000;
-    sgx_status = Sgx_seal_data_ex(0x0001, sgx_attr, sgx_misc,
-            0, NULL, src_len, p_src, sealed_data_sz, *p_sealed_data);
-
-    if (SGX_SUCCESS != sgx_status)
-    {
-        log_err("Seal data failed!Error code:%lx\n", sgx_status);
-        crust_status = CRUST_SEAL_DATA_FAILED;
-        *p_sealed_data = NULL;
-    }
-
-    *sealed_data_size = (size_t)sealed_data_sz;
-
-    return crust_status;
-}
+//crust_status_t seal_data_mrenclave(const uint8_t *p_src, size_t src_len,
+//        sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size)
+//{
+//    sgx_status_t sgx_status = SGX_SUCCESS;
+//    crust_status_t crust_status = CRUST_SUCCESS;
+//
+//    uint32_t sealed_data_sz = sgx_calc_sealed_data_size(0, src_len);
+//    *p_sealed_data = (sgx_sealed_data_t *)enc_malloc(sealed_data_sz);
+//    if (*p_sealed_data == NULL)
+//    {
+//        log_err("Malloc memory failed!\n");
+//        return CRUST_MALLOC_FAILED;
+//    }
+//    memset(*p_sealed_data, 0, sealed_data_sz);
+//    sgx_attributes_t sgx_attr;
+//    sgx_attr.flags = 0xFF0000000000000B;
+//    sgx_attr.xfrm = 0;
+//    sgx_misc_select_t sgx_misc = 0xF0000000;
+//    sgx_status = Sgx_seal_data_ex(0x0001, sgx_attr, sgx_misc,
+//            0, NULL, src_len, p_src, sealed_data_sz, *p_sealed_data);
+//
+//    if (SGX_SUCCESS != sgx_status)
+//    {
+//        log_err("Seal data failed!Error code:%lx\n", sgx_status);
+//        crust_status = CRUST_SEAL_DATA_FAILED;
+//        *p_sealed_data = NULL;
+//    }
+//
+//    *sealed_data_size = (size_t)sealed_data_sz;
+//
+//    return crust_status;
+//}
 
 /**
  * @description: Seal data by using input bytes with MRSIGNER method
@@ -340,35 +340,35 @@ crust_status_t seal_data_mrenclave(const uint8_t *p_src, size_t src_len,
  * @param sealed_data_size -> the length of output bytes
  * @return: Seal status
  */
-crust_status_t seal_data_mrsigner(const uint8_t *p_src, size_t src_len,
-        sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size)
-{
-    sgx_status_t sgx_status = SGX_SUCCESS;
-    crust_status_t crust_status = CRUST_SUCCESS;
-
-    uint32_t sealed_data_sz = sgx_calc_sealed_data_size(0, src_len);
-    *p_sealed_data = (sgx_sealed_data_t *)enc_malloc(sealed_data_sz);
-    if (*p_sealed_data == NULL)
-    {
-        log_err("Malloc memory failed!\n");
-        return CRUST_MALLOC_FAILED;
-    }
-
-    memset(*p_sealed_data, 0, sealed_data_sz);
-
-    sgx_status = Sgx_seal_data(0, NULL, src_len, p_src, sealed_data_sz, *p_sealed_data);
-    if (SGX_SUCCESS != sgx_status)
-    {
-        log_err("Seal data failed!Error code:%lx\n", sgx_status);
-        free(*p_sealed_data);
-        *p_sealed_data = NULL;
-        return CRUST_SEAL_DATA_FAILED;
-    }
-
-    *sealed_data_size = (size_t)sealed_data_sz;
-
-    return crust_status;
-}
+//crust_status_t seal_data_mrsigner(const uint8_t *p_src, size_t src_len,
+//        sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size)
+//{
+//    sgx_status_t sgx_status = SGX_SUCCESS;
+//    crust_status_t crust_status = CRUST_SUCCESS;
+//
+//    uint32_t sealed_data_sz = sgx_calc_sealed_data_size(0, src_len);
+//    *p_sealed_data = (sgx_sealed_data_t *)enc_malloc(sealed_data_sz);
+//    if (*p_sealed_data == NULL)
+//    {
+//        log_err("Malloc memory failed!\n");
+//        return CRUST_MALLOC_FAILED;
+//    }
+//
+//    memset(*p_sealed_data, 0, sealed_data_sz);
+//
+//    sgx_status = Sgx_seal_data(0, NULL, src_len, p_src, sealed_data_sz, *p_sealed_data);
+//    if (SGX_SUCCESS != sgx_status)
+//    {
+//        log_err("Seal data failed!Error code:%lx\n", sgx_status);
+//        free(*p_sealed_data);
+//        *p_sealed_data = NULL;
+//        return CRUST_SEAL_DATA_FAILED;
+//    }
+//
+//    *sealed_data_size = (size_t)sealed_data_sz;
+//
+//    return crust_status;
+//}
 
 /**
  * @description: Validate merkle tree in json format
@@ -388,7 +388,7 @@ crust_status_t validate_merkletree_json(json::JSON tree)
     }
 
     crust_status_t crust_status = CRUST_SUCCESS;
-    sgx_sha256_hash_t parent_hash;
+    std::string parent_hash;
     uint8_t *parent_hash_org = NULL;
     uint8_t *parent_data_hash = NULL;
 
@@ -423,18 +423,19 @@ crust_status_t validate_merkletree_json(json::JSON tree)
     }
 
     // Compute and compare hash value
-    sgx_sha256_msg(children_hashs, children_buffer_size, &parent_hash);
+    //TODO...使用标准sha256库代替
+//    sgx_sha256_msg(children_hashs, children_buffer_size, &parent_hash);
     parent_hash_org = hex_string_to_bytes(tree[MT_HASH].ToString().c_str(), HASH_LENGTH * 2);
     if (parent_hash_org == NULL)
     {
         crust_status = CRUST_MALLOC_FAILED;
         goto cleanup;
     }
-    if (memcmp(parent_hash_org, parent_hash, HASH_LENGTH) != 0)
-    {
-        crust_status = CRUST_NOT_EQUAL;
-        goto cleanup;
-    }
+//    if (memcmp(parent_hash_org, parent_hash, HASH_LENGTH) != 0)
+//    {
+//        crust_status = CRUST_NOT_EQUAL;
+//        goto cleanup;
+//    }
 
 cleanup:
     if (parent_data_hash != NULL)
@@ -542,28 +543,28 @@ void *enc_crealloc(void *p, size_t old_size, size_t new_size)
  * @param p_sealed_data -> Pointer to sealed data
  * @return: Seal result status
  */
-sgx_status_t Sgx_seal_data(const uint32_t additional_MACtext_length,
-                           const uint8_t *p_additional_MACtext,
-                           const uint32_t text2encrypt_length,
-                           const uint8_t *p_text2encrypt,
-                           const uint32_t sealed_data_size,
-                           sgx_sealed_data_t *p_sealed_data)
-{
-    uint8_t *p_test = (uint8_t *)enc_malloc(sealed_data_size);
-    if (p_test == NULL)
-    {
-        log_err("Malloc memory failed!\n");
-        return SGX_ERROR_OUT_OF_MEMORY;
-    }
-    free(p_test);
-
-    return sgx_seal_data(additional_MACtext_length,
-                         p_additional_MACtext,
-                         text2encrypt_length,
-                         p_text2encrypt,
-                         sealed_data_size,
-                         p_sealed_data);
-}
+//sgx_status_t Sgx_seal_data(const uint32_t additional_MACtext_length,
+//                           const uint8_t *p_additional_MACtext,
+//                           const uint32_t text2encrypt_length,
+//                           const uint8_t *p_text2encrypt,
+//                           const uint32_t sealed_data_size,
+//                           sgx_sealed_data_t *p_sealed_data)
+//{
+//    uint8_t *p_test = (uint8_t *)enc_malloc(sealed_data_size);
+//    if (p_test == NULL)
+//    {
+//        log_err("Malloc memory failed!\n");
+//        return SGX_ERROR_OUT_OF_MEMORY;
+//    }
+//    free(p_test);
+//
+//    return sgx_seal_data(additional_MACtext_length,
+//                         p_additional_MACtext,
+//                         text2encrypt_length,
+//                         p_text2encrypt,
+//                         sealed_data_size,
+//                         p_sealed_data);
+//}
 
 /**
  * @description: A wrapper function for sgx_seal_data_ex
@@ -578,34 +579,34 @@ sgx_status_t Sgx_seal_data(const uint32_t additional_MACtext_length,
  * @param p_sealed_data -> Pointer to sealed data
  * @return: Seal result status
  */
-sgx_status_t Sgx_seal_data_ex(const uint16_t key_policy,
-                              const sgx_attributes_t attribute_mask,
-                              const sgx_misc_select_t misc_mask,
-                              const uint32_t additional_MACtext_length,
-                              const uint8_t *p_additional_MACtext,
-                              const uint32_t text2encrypt_length,
-                              const uint8_t *p_text2encrypt,
-                              const uint32_t sealed_data_size,
-                              sgx_sealed_data_t *p_sealed_data)
-{
-    uint8_t *p_test = (uint8_t *)enc_malloc(sealed_data_size);
-    if (p_test == NULL)
-    {
-        log_err("Malloc memory failed!\n");
-        return SGX_ERROR_OUT_OF_MEMORY;
-    }
-    free(p_test);
-
-    return sgx_seal_data_ex(key_policy,
-                            attribute_mask,
-                            misc_mask,
-                            additional_MACtext_length,
-                            p_additional_MACtext,
-                            text2encrypt_length,
-                            p_text2encrypt,
-                            sealed_data_size,
-                            p_sealed_data);
-}
+//sgx_status_t Sgx_seal_data_ex(const uint16_t key_policy,
+//                              const sgx_attributes_t attribute_mask,
+//                              const sgx_misc_select_t misc_mask,
+//                              const uint32_t additional_MACtext_length,
+//                              const uint8_t *p_additional_MACtext,
+//                              const uint32_t text2encrypt_length,
+//                              const uint8_t *p_text2encrypt,
+//                              const uint32_t sealed_data_size,
+//                              sgx_sealed_data_t *p_sealed_data)
+//{
+//    uint8_t *p_test = (uint8_t *)enc_malloc(sealed_data_size);
+//    if (p_test == NULL)
+//    {
+//        log_err("Malloc memory failed!\n");
+//        return SGX_ERROR_OUT_OF_MEMORY;
+//    }
+//    free(p_test);
+//
+//    return sgx_seal_data_ex(key_policy,
+//                            attribute_mask,
+//                            misc_mask,
+//                            additional_MACtext_length,
+//                            p_additional_MACtext,
+//                            text2encrypt_length,
+//                            p_text2encrypt,
+//                            sealed_data_size,
+//                            p_sealed_data);
+//}
 
 /**
  * @description: Remove indicated character from given string
@@ -647,9 +648,8 @@ void replace(std::string &data, std::string org_str, std::string det_str)
  * @param p_func -> Store function
  * @param mutex -> Mutex lock to sync data
  */
-void store_large_data(const uint8_t *data, size_t data_size,  sgx_thread_mutex_t &mutex)
+void store_large_data(const uint8_t *data, size_t data_size)
 {
-    sgx_thread_mutex_lock(&mutex);
     if (data_size > OCALL_STORE_THRESHOLD)
     {
         size_t offset = 0;
@@ -668,7 +668,6 @@ void store_large_data(const uint8_t *data, size_t data_size,  sgx_thread_mutex_t
     {
 //        p_func(reinterpret_cast<const char *>(data), data_size, true);
     }
-    sgx_thread_mutex_unlock(&mutex);
 }
 
 /**

@@ -19,13 +19,6 @@
 #include <openssl/bn.h>
 #include <openssl/x509v3.h>
 
-#include <sgx_eid.h>
-#include <sgx_uae_launch.h>
-#include <sgx_uae_epid.h>
-#include <sgx_uae_quote_ex.h>
-#include <sgx_tseal.h>
-
-#include "sgx_thread.h"
 #include "CrustStatus.h"
 #include "Parameter.h"
 
@@ -75,21 +68,21 @@ std::vector<unsigned char> unsigned_char_array_to_unsigned_char_vector(const uns
 char* unsigned_char_to_hex(unsigned char in);
 std::string byte_vec_to_string(std::vector<uint8_t> bytes);
 
-sgx_status_t Sgx_seal_data(const uint32_t additional_MACtext_length,
-                           const uint8_t *p_additional_MACtext, const uint32_t text2encrypt_length,
-                           const uint8_t *p_text2encrypt, const uint32_t sealed_data_size,
-                           sgx_sealed_data_t *p_sealed_data);
-
-sgx_status_t Sgx_seal_data_ex(const uint16_t key_policy,
-                              const sgx_attributes_t attribute_mask,
-                              const sgx_misc_select_t misc_mask,
-                              const uint32_t additional_MACtext_length,
-                              const uint8_t *p_additional_MACtext, const uint32_t text2encrypt_length,
-                              const uint8_t *p_text2encrypt, const uint32_t sealed_data_size,
-                              sgx_sealed_data_t *p_sealed_data);
-
-crust_status_t seal_data_mrenclave(const uint8_t *p_src, size_t src_len, sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size);
-crust_status_t seal_data_mrsigner(const uint8_t *p_src, size_t src_len, sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size);
+//sgx_status_t Sgx_seal_data(const uint32_t additional_MACtext_length,
+//                           const uint8_t *p_additional_MACtext, const uint32_t text2encrypt_length,
+//                           const uint8_t *p_text2encrypt, const uint32_t sealed_data_size,
+//                           sgx_sealed_data_t *p_sealed_data);
+//
+//sgx_status_t Sgx_seal_data_ex(const uint16_t key_policy,
+//                              const sgx_attributes_t attribute_mask,
+//                              const sgx_misc_select_t misc_mask,
+//                              const uint32_t additional_MACtext_length,
+//                              const uint8_t *p_additional_MACtext, const uint32_t text2encrypt_length,
+//                              const uint8_t *p_text2encrypt, const uint32_t sealed_data_size,
+//                              sgx_sealed_data_t *p_sealed_data);
+//
+//crust_status_t seal_data_mrenclave(const uint8_t *p_src, size_t src_len, sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size);
+//crust_status_t seal_data_mrsigner(const uint8_t *p_src, size_t src_len, sgx_sealed_data_t **p_sealed_data, size_t *sealed_data_size);
 
 crust_status_t validate_merkletree_json(json::JSON tree);
 void *enc_malloc(size_t size);
@@ -97,7 +90,7 @@ void *enc_realloc(void *p, size_t size);
 void *enc_crealloc(void *p, size_t old_size, size_t new_size);
 void remove_char(std::string &data, char c);
 void replace(std::string &data, std::string org_str, std::string det_str);
-void store_large_data(const uint8_t *data, size_t data_size, sgx_thread_mutex_t &mutex);
+void store_large_data(const uint8_t *data, size_t data_size);
 char *base64_decode(const char *msg, size_t *sz);
 std::string base58_encode(const uint8_t *input, size_t len);
 std::string hash_to_cid(const uint8_t *hash);

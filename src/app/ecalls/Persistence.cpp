@@ -16,7 +16,7 @@ crust_status_t persist_add(std::string key, const uint8_t *value, size_t value_l
     crust_status_t crust_status = CRUST_SUCCESS;
     sgx_sealed_data_t *p_sealed_data = NULL;
     size_t sealed_data_size = 0;
-    crust_status = seal_data_mrenclave(value, value_len, &p_sealed_data, &sealed_data_size);
+//    crust_status = seal_data_mrenclave(value, value_len, &p_sealed_data, &sealed_data_size);
     if (CRUST_SUCCESS != crust_status)
     {
         return crust_status;
@@ -53,7 +53,7 @@ crust_status_t persist_set(std::string key, const uint8_t *value, size_t value_l
     crust_status_t crust_status = CRUST_SUCCESS;
     sgx_sealed_data_t *p_sealed_data = NULL;
     size_t sealed_data_size = 0;
-    crust_status = seal_data_mrenclave(value, value_len, &p_sealed_data, &sealed_data_size);
+//    crust_status = seal_data_mrenclave(value, value_len, &p_sealed_data, &sealed_data_size);
     if (CRUST_SUCCESS != crust_status)
     {
         return crust_status;

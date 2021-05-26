@@ -10,6 +10,9 @@
 
 #include "EUtils.h"
 #include "CrustStatus.h"
+#include "PersistOCalls.h"
+#include "OCalls.h"
+#include <string.h>
 
 #if defined(__cplusplus)
 extern "C"

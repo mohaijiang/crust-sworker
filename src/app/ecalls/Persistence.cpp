@@ -22,7 +22,7 @@ crust_status_t persist_add(std::string key, const uint8_t *value, size_t value_l
         return crust_status;
     }
 
-    ocall_persist_add(&crust_status, key.c_str(), (uint8_t *)p_sealed_data, sealed_data_size);
+    crust_status = ocall_persist_add(key.c_str(), (uint8_t *)p_sealed_data, sealed_data_size);
     free(p_sealed_data);
 
     return crust_status;
@@ -36,7 +36,7 @@ crust_status_t persist_add(std::string key, const uint8_t *value, size_t value_l
 crust_status_t persist_del(std::string key)
 {
     crust_status_t crust_status = CRUST_SUCCESS;
-    ocall_persist_del(&crust_status, key.c_str());
+    crust_status=ocall_persist_del(key.c_str());
 
     return crust_status;
 }

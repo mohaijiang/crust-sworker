@@ -6,6 +6,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string>
+#include <cstring>
 #include <vector>
 
 #include <openssl/evp.h>
@@ -17,6 +18,12 @@
 #include <openssl/ecdsa.h>
 #include <openssl/bn.h>
 #include <openssl/x509v3.h>
+
+#include <sgx_eid.h>
+#include <sgx_uae_launch.h>
+#include <sgx_uae_epid.h>
+#include <sgx_uae_quote_ex.h>
+#include <sgx_tseal.h>
 
 #include "sgx_thread.h"
 #include "CrustStatus.h"
@@ -48,8 +55,6 @@ const char *const BASE58_ALPHABET =
     "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 const double base58_ifactor = 1.36565823730976103695740418120764243208481439700722980119458355862779176747360903943915516885072037696111192757109;
 
-typedef sgx_status_t (*p_ocall_store)(const char *data, size_t data_size, bool cover);
-
 
 #if defined(__cplusplus)
 extern "C"
@@ -65,7 +70,6 @@ int log_debug(const char* fmt, ...);
 int char_to_int(char input);
 char *hexstring(const void *vsrc, size_t len);
 std::string hexstring_safe(const void *vsrc, size_t len);
-uint8_t *hex_string_to_bytes(const void *src, size_t len);
 std::string unsigned_char_array_to_hex_string(const unsigned char *in, size_t size);
 std::vector<unsigned char> unsigned_char_array_to_unsigned_char_vector(const unsigned char *in, size_t size);
 char* unsigned_char_to_hex(unsigned char in);
@@ -93,7 +97,7 @@ void *enc_realloc(void *p, size_t size);
 void *enc_crealloc(void *p, size_t old_size, size_t new_size);
 void remove_char(std::string &data, char c);
 void replace(std::string &data, std::string org_str, std::string det_str);
-void store_large_data(const uint8_t *data, size_t data_size, p_ocall_store p_func, sgx_thread_mutex_t &mutex);
+void store_large_data(const uint8_t *data, size_t data_size, sgx_thread_mutex_t &mutex);
 char *base64_decode(const char *msg, size_t *sz);
 std::string base58_encode(const uint8_t *input, size_t len);
 std::string hash_to_cid(const uint8_t *hash);

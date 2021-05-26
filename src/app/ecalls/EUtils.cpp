@@ -1,5 +1,7 @@
 #include "EUtils.h"
 #include "Json.h"
+#include <iostream>
+#include "FormatUtils.h"
 
 using namespace std;
 
@@ -219,37 +221,6 @@ std::string byte_vec_to_string(std::vector<uint8_t> bytes)
     return hexstring_safe(bytes.data(), bytes.size());
 }
 
-/**
- * @description: Convert hexstring to bytes array, note that
- * the size of got data is half of len
- * @param src -> Source char*
- * @param len -> Source char* length
- * @return: Bytes array
- */
-uint8_t *hex_string_to_bytes(const void *src, size_t len)
-{
-    if (len % 2 != 0 || len == 0)
-    {
-        return NULL;
-    }
-
-    const char *rsrc = (const char *)src;
-    uint8_t *p_target;
-    uint8_t *target = (uint8_t *)enc_malloc(len / 2);
-    if (target == NULL)
-    {
-        return NULL;
-    }
-    memset(target, 0, len / 2);
-    p_target = target;
-    for (size_t i = 0; i < len; i += 2)
-    {
-        *(target++) = (uint8_t)(char_to_int(rsrc[0]) * 16 + char_to_int(rsrc[1]));
-        rsrc += 2;
-    }
-
-    return p_target;
-}
 
 /**
  * @description: convert byte array to hex string
@@ -643,7 +614,7 @@ sgx_status_t Sgx_seal_data_ex(const uint16_t key_policy,
  */
 void remove_char(std::string &data, char c)
 {
-    data.erase(std::remove(data.begin(), data.end(), c), data.end());
+//    data.erase(std::remove(data.begin(), data.end(), c), data.end());
 }
 
 /**
@@ -676,7 +647,7 @@ void replace(std::string &data, std::string org_str, std::string det_str)
  * @param p_func -> Store function
  * @param mutex -> Mutex lock to sync data
  */
-void store_large_data(const uint8_t *data, size_t data_size, p_ocall_store p_func, sgx_thread_mutex_t &mutex)
+void store_large_data(const uint8_t *data, size_t data_size,  sgx_thread_mutex_t &mutex)
 {
     sgx_thread_mutex_lock(&mutex);
     if (data_size > OCALL_STORE_THRESHOLD)
@@ -687,14 +658,15 @@ void store_large_data(const uint8_t *data, size_t data_size, p_ocall_store p_fun
         while (data_size > offset)
         {
             part_size = std::min(data_size - offset, (size_t)OCALL_STORE_THRESHOLD);
-            p_func(reinterpret_cast<const char *>(data + offset), part_size, cover);
+            cout <<  reinterpret_cast<const char *>(data + offset) << endl;
+//            p_func(reinterpret_cast<const char *>(data + offset), part_size, cover);
             offset += part_size;
             cover = false;
         }
     }
     else
     {
-        p_func(reinterpret_cast<const char *>(data), data_size, true);
+//        p_func(reinterpret_cast<const char *>(data), data_size, true);
     }
     sgx_thread_mutex_unlock(&mutex);
 }
